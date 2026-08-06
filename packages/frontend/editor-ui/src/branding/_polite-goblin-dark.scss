@@ -6,22 +6,22 @@
  */
 
 :root {
-	color-scheme: dark;
-
 	/* Polite Goblin brand primitives */
 	--pg-goblin-ink: #0f1113;
 	--pg-surface-1: #14181b;
 	--pg-surface-2: #191e22;
 	--pg-surface-3: #20262b;
 	--pg-border: #3b413c;
-	--pg-border-warm: #5a5038;
 	--pg-parchment: #e8dcc0;
-	--pg-parchment-muted: #bcb39f;
 	--pg-goblin-green: #7bc043;
 	--pg-moss-green: #4e7c2e;
 	--pg-mischief-orange: #e4572e;
 	--pg-stage-blue: #3d8bd9;
 	--pg-spark-yellow: #ffd34d;
+}
+
+@mixin polite-goblin-dark-theme {
+	color-scheme: dark;
 
 	/* Legacy n8n compatibility tokens */
 	--color-primary: var(--pg-goblin-green);
@@ -90,6 +90,24 @@
 	--focus--outline-color: rgb(255 211 77 / 26%);
 	--focus--border-color: var(--pg-spark-yellow);
 
+	/* Semantic feedback states */
+	--background--success: #1c2a18;
+	--border-color--success: #4e7c2e;
+	--text-color--success: #b6df8e;
+	--icon-color--success: #91cf5f;
+	--background--warning: #2b2412;
+	--border-color--warning: #8a6f22;
+	--text-color--warning: #ffe487;
+	--icon-color--warning: var(--pg-spark-yellow);
+	--background--danger: #311a16;
+	--border-color--danger: #8c3d2b;
+	--text-color--danger: #ff9a80;
+	--icon-color--danger: #ff7653;
+	--background--info: #162536;
+	--border-color--info: #2d6fae;
+	--text-color--info: #9bc8f2;
+	--icon-color--info: #6eabe5;
+
 	/* Workflow canvas */
 	--canvas--color--background: #0d1012;
 	--canvas--dot--color: #343b36;
@@ -106,80 +124,63 @@
 	--node--type-main--color: #929a91;
 }
 
-html,
-body,
-#app {
-	background: var(--pg-goblin-ink);
-	color: var(--text-color);
+/* Explicit app setting selectors. */
+:root[data-theme='dark'],
+html.dark,
+body.dark {
+	@include polite-goblin-dark-theme;
 }
 
-body {
-	background-image:
-		radial-gradient(circle at 12% 0%, rgb(123 192 67 / 5%), transparent 28rem),
-		linear-gradient(rgb(255 255 255 / 1.2%) 1px, transparent 1px),
-		linear-gradient(90deg, rgb(255 255 255 / 1.2%) 1px, transparent 1px);
-	background-size: auto, 48px 48px, 48px 48px;
+/* System dark mode remains the default only when the app has not selected light mode. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		@include polite-goblin-dark-theme;
+	}
 }
 
-/* A restrained ink-and-parchment treatment for shared surfaces. */
-.el-card,
-.el-dialog,
-.el-drawer,
-.el-popper,
-.el-dropdown-menu,
-.el-message-box,
-.el-table,
-.el-input__wrapper,
-.el-textarea__inner,
-.el-select__wrapper {
-	background-color: var(--pg-surface-2) !important;
-	border-color: var(--pg-border) !important;
-	box-shadow: 0 12px 32px rgb(0 0 0 / 22%);
+/* Component refinements are intentionally narrow; semantic tokens do most work. */
+:where(:root[data-theme='dark'], html.dark, body.dark) {
+	.el-dialog,
+	.el-drawer,
+	.el-message-box {
+		border-color: var(--pg-border);
+		box-shadow: 0 12px 32px rgb(0 0 0 / 22%);
+	}
+
+	.el-button--primary {
+		background: linear-gradient(180deg, #82c948, #5f992f);
+		border-color: #91d15a;
+		color: #11160e;
+		text-shadow: 0 1px rgb(255 255 255 / 18%);
+	}
+
+	.el-button--primary:hover,
+	.el-button--primary:focus-visible {
+		background: linear-gradient(180deg, #95d65d, #70aa3d);
+		box-shadow: 0 0 0 3px rgb(255 211 77 / 16%);
+	}
+
+	.el-input__wrapper:focus-within,
+	.el-select__wrapper.is-focused,
+	.el-textarea__inner:focus {
+		border-color: var(--pg-spark-yellow);
+		box-shadow: 0 0 0 2px rgb(255 211 77 / 14%);
+	}
+
+	.el-table__row:hover > td.el-table__cell {
+		background-color: rgb(123 192 67 / 7%);
+	}
 }
 
-.el-button--primary {
-	background: linear-gradient(180deg, #82c948, #5f992f) !important;
-	border-color: #91d15a !important;
-	color: #11160e !important;
-	text-shadow: 0 1px rgb(255 255 255 / 18%);
-}
-
-.el-button--primary:hover,
-.el-button--primary:focus-visible {
-	background: linear-gradient(180deg, #95d65d, #70aa3d) !important;
-	box-shadow: 0 0 0 3px rgb(255 211 77 / 16%);
-}
-
-.el-input__wrapper:focus-within,
-.el-select__wrapper.is-focused,
-.el-textarea__inner:focus {
-	border-color: var(--pg-spark-yellow) !important;
-	box-shadow: 0 0 0 2px rgb(255 211 77 / 14%) !important;
-}
-
-.el-table tr,
-.el-table th.el-table__cell,
-.el-table td.el-table__cell {
-	background-color: transparent !important;
-	border-color: #2b312e !important;
-}
-
-.el-table__row:hover > td.el-table__cell {
-	background-color: rgb(123 192 67 / 7%) !important;
-}
-
-/* Adds the brand spark without affecting layout or interaction. */
-#app::after {
-	content: '✦';
-	position: fixed;
-	right: 20px;
-	bottom: 16px;
-	z-index: 1;
-	color: var(--pg-spark-yellow);
-	font-size: 16px;
-	opacity: 0.42;
-	pointer-events: none;
-	filter: drop-shadow(0 0 6px rgb(255 211 77 / 35%));
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		.el-dialog,
+		.el-drawer,
+		.el-message-box {
+			border-color: var(--pg-border);
+			box-shadow: 0 12px 32px rgb(0 0 0 / 22%);
+		}
+	}
 }
 
 ::selection {
