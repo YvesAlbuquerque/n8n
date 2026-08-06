@@ -21,9 +21,21 @@ Do not implement Loomlight changes directly on `master` or `loomlight/main`.
 
 If `master` contains fork-only commits or cannot fast-forward, stop and investigate. Do not force-update it to conceal divergence.
 
-## Image publication
+## Fork-specific release workflow
 
-The fork-specific workflow `.github/workflows/loomlight-image.yml` builds the existing upstream n8n Dockerfile for `linux/amd64` and publishes to:
+`.github/workflows/release-loomlight-image.yml` is intentionally documented here rather than in the upstream-owned `.github/WORKFLOWS.md`. Keeping fork-only automation documentation isolated reduces recurring conflicts when synchronizing `master` from upstream.
+
+The workflow:
+
+- runs validation on every pull request targeting `loomlight/main`, without path filtering, because repository actions, scripts, patches, packages, and Docker context can all affect the image;
+- gives pull-request validation only `contents: read` permission;
+- builds the application and the existing upstream n8n Dockerfile for `linux/amd64`;
+- verifies the built container with an explicit `n8n --version` smoke test;
+- publishes only on pushes to `loomlight/main` or explicit manual dispatch;
+- grants `packages: write` only to the publish job;
+- smoke-tests the immutable image after publication.
+
+The workflow publishes to:
 
 ```text
 ghcr.io/yvesalbuquerque/n8n
