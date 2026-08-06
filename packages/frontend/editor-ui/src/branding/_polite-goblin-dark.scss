@@ -124,22 +124,7 @@
 	--node--type-main--color: #929a91;
 }
 
-/* Explicit app setting selectors. */
-:root[data-theme='dark'],
-html.dark,
-body.dark {
-	@include polite-goblin-dark-theme;
-}
-
-/* System dark mode remains the default only when the app has not selected light mode. */
-@media (prefers-color-scheme: dark) {
-	:root:not([data-theme='light']) {
-		@include polite-goblin-dark-theme;
-	}
-}
-
-/* Component refinements are intentionally narrow; semantic tokens do most work. */
-:where(:root[data-theme='dark'], html.dark, body.dark) {
+@mixin polite-goblin-dark-components {
 	.el-dialog,
 	.el-drawer,
 	.el-message-box {
@@ -170,39 +155,44 @@ body.dark {
 	.el-table__row:hover > td.el-table__cell {
 		background-color: rgb(123 192 67 / 7%);
 	}
-}
 
-@media (prefers-color-scheme: dark) {
-	:root:not([data-theme='light']) {
-		.el-dialog,
-		.el-drawer,
-		.el-message-box {
-			border-color: var(--pg-border);
-			box-shadow: 0 12px 32px rgb(0 0 0 / 22%);
-		}
+	::selection {
+		background: rgb(123 192 67 / 35%);
+		color: #fff8e8;
+	}
+
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: #101416;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #3e473f;
+		border: 2px solid #101416;
+		border-radius: 10px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--pg-moss-green);
 	}
 }
 
-::selection {
-	background: rgb(123 192 67 / 35%);
-	color: #fff8e8;
+/* Explicit app setting selectors. */
+:root[data-theme='dark'],
+html.dark,
+body.dark {
+	@include polite-goblin-dark-theme;
+	@include polite-goblin-dark-components;
 }
 
-::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
-}
-
-::-webkit-scrollbar-track {
-	background: #101416;
-}
-
-::-webkit-scrollbar-thumb {
-	background: #3e473f;
-	border: 2px solid #101416;
-	border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: var(--pg-moss-green);
+/* System dark mode remains the default only when the app has not selected light mode. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']):not(.light):not(:has(body.light)) {
+		@include polite-goblin-dark-theme;
+		@include polite-goblin-dark-components;
+	}
 }
