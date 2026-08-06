@@ -97,7 +97,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          actual="$(docker run --rm loomlight-n8n:pr n8n --version)"
+          actual="$(docker run --rm --entrypoint n8n loomlight-n8n:pr --version)"
           test "$actual" = "${{ steps.metadata.outputs.version }}"
 
       - name: Build and publish immutable image
